@@ -8,10 +8,11 @@
 # 214,Sarah,Simpson,MM/DD/YYYY,***-**-8166,FL
 # 15,Samantha,Lara,09/08/1993,***-**-7526,CO
 
-
+# import modules
 import os
 import csv
 
+# define function to abbreviate state 
 def AbbreviateState(LongStateString):
     us_state_abbrev = {
     'Alabama': 'AL',
@@ -69,5 +70,89 @@ def AbbreviateState(LongStateString):
     return ShortStateString
 
 
-LongStateString = input("What state?")
-print(AbbreviateState(LongStateString))
+#set file path and open CSV file
+filepath = os.path.join("..","Resources","PyBoss_Data.csv")
+csvfile = open(filepath, "r")
+ImportedCSVData = csv.reader(csvfile)
+
+# create new file for new format 
+writefilepath = os.path.join("..","Analysis","PyBoss_NewData.csv")
+if os.path.exists(writefilepath):
+    os.remove(writefilepath)
+
+writefile = open(writefilepath, "a")
+
+# Edit header 
+for firstrow in ImportedCSVData:
+    firstrow = 'Emp ID,First Name,Last Name,DOB,SSN,State'
+    print(firstrow, file=writefile)
+    break
+
+FormattedRows = []
+count = 0
+SourceColumnCount = 5
+counter = 0
+EmpID = []
+FirstName = []
+LastName = []
+SSN = []
+State = []
+
+# for rows in ImportedCSVData:
+#     print("break1")
+#     print(rows)
+#     for columns in range(SourceColumnCount):
+#         print(rows[columns])
+#         if columns == 0:
+#             EmpID.append(rows[columns])
+#         if columns == 1:
+
+
+#         count = count + 1
+#         if count > 12:
+#             break
+#     counter = counter + 1
+#     if counter > 3:
+#         break
+
+def ReOrderDate(InputDate):
+    SplitDateList = InputDate.split("-")
+    SplitDateList.append("/")
+    DateOrder = [1,3,2,3,0]
+    ReOrderedDateList = [SplitDateList[i] for i in DateOrder]
+    ReOrderedDateString = ''.join([str(elem) for elem in ReOrderedDateList])
+    return ReOrderedDateString
+
+def HashOutSSN(InputSSN):
+    SplitSSN = InputSSN.split("-")
+    SplitSSN.append("***")
+    SplitSSN.append("**")
+    SplitSSN.append('-')
+    SSNOrder = [3,5,4,5,2]
+    ReOrderedSSNList = [SplitSSN[i] for i in SSNOrder]
+    ReOrderedSSNString = ''.join([str(elem) for elem in ReOrderedSSNList])
+    return ReOrderedSSNString
+
+SplitName =''
+NewRow = []
+for rows in ImportedCSVData:
+    # print("break1")
+    # print(rows)
+    #insert column for firstname/lastname
+    rows.insert(2, rows[1])
+    # print(rows)
+    #split names into list 
+    FirstName = (rows[1].split())[0]
+    LastName = (rows[1].split())[1]
+    rows[1] = FirstName
+    rows[2] = LastName
+    rows[3] = ReOrderDate(rows[3])
+    rows[4] = HashOutSSN(rows[4])
+    rows[5] = AbbreviateState(rows[5])
+    print(rows)
+
+
+
+#Close CSV files
+csvfile.close()
+writefile.close()
