@@ -90,32 +90,25 @@ def AbbreviateState(LongStateString):
     return ShortStateString
 
 
-#set file path and open CSV file
+#set file path and open source CSV file
 filepath = os.path.join("..","Resources","PyBoss_Data.csv")
 csvfile = open(filepath, "r")
 ImportedCSVData = csv.reader(csvfile)
 
-# create new file for new format 
-writefilepath = os.path.join("..","Analysis","PyBoss_NewData.csv")
+
+#Open WriteFile
+writefilepath = os.path.join("..","Analysis","PyBoss_ReOrdered_Data.csv")
 if os.path.exists(writefilepath):
     os.remove(writefilepath)
-
 writefile = open(writefilepath, "a")
 
 # Edit header 
 for firstrow in ImportedCSVData:
     firstrow = 'Emp ID,First Name,Last Name,DOB,SSN,State'
-    print(firstrow, file=writefile)
+    #print(firstrow, file=writefile)
     break
 
-
-# SplitName =''
-# NewRow = []
-
-filepath = os.path.join("..","Analysis","PyBoss_ReOrdered_Data.csv")
-if os.path.exists(filepath):
-    os.remove(filepath)
-
+# perform data conversion task
 for rows in ImportedCSVData:
     # insert extra column for firstname/lastname
     rows.insert(2, rows[1])
@@ -129,12 +122,12 @@ for rows in ImportedCSVData:
     rows[3] = ReOrderDate(rows[3])
     rows[4] = HashOutSSN(rows[4])
     rows[5] = AbbreviateState(rows[5])
-    print(rows)
     # print new csv file 
-    with open(filepath,"a") as writefile:
+    with open(writefilepath,"a") as writefile:
         print(rows[0] + ",", rows[1] + ",", rows[2] + ",", rows[3] + ",", rows[4] + ",", rows[5]  , file=writefile)
 
-
+# print to screen
+print(f"Updated data has been saved to {writefilepath}")
 
 #Close CSV files
 csvfile.close()
