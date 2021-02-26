@@ -23,6 +23,8 @@ MonthList = []
 MaxProfitMonth = ""
 MinProfitMonth = ""
 
+ProfitDeltaList = []
+
 #start loop, add month counter, add total profit
 #Create ProfitList and MonthList for analysis calculation 
 for rows in ImportedCSVData:
@@ -30,6 +32,15 @@ for rows in ImportedCSVData:
     TotalProfit = TotalProfit + int(rows[1])
     ProfitList.append(int(rows[1]))
     MonthList.append(rows[0])
+
+# calculate ProfitDelta
+FirstRun = True
+for entry in range(len(ProfitList)):
+    if FirstRun == False:
+        ProfitDeltaList.append(ProfitList[entry] - ProfitList[entry - 1])
+    FirstRun = False
+ProfitDelta = sum(ProfitDeltaList) / len(ProfitDeltaList)
+print(ProfitDelta)
 
 #Calculate Average Change
 AverageChange = TotalProfit / MonthCount
@@ -43,6 +54,7 @@ FormattedTotalProfit = '{:,.2f}'.format(TotalProfit)
 FormattedAverageChange = '{:,.2f}'.format(AverageChange)
 FormattedMaxProfit = '{:,.2f}'.format(MaxProfit)
 FormattedMinProfit = '{:,.2f}'.format(MinProfit)
+FormattedProfitDelta = '{:,.2f}'.format(ProfitDelta)
 
 #Find relative Min and Max Months
 MinProfitMonthIndex = ProfitList.index(MinProfit)
@@ -55,7 +67,7 @@ print("Financial Analysis")
 print("----------------------------")
 print(f"Total Months: {MonthCount}")
 print(f"Total: ${FormattedTotalProfit}")
-print(f"Average  Change: ${FormattedAverageChange}")
+print(f"Average  Change: ${FormattedProfitDelta}")
 print(f"Greatest Increase in Profits: ${FormattedMaxProfit} in {MaxProfitMonth}")
 print(f"Greatest Decrease in Profits: ${FormattedMinProfit} in {MinProfitMonth}")
 
@@ -70,7 +82,7 @@ with open(filepath,"w") as writefile:
     print("----------------------------", file=writefile)
     print(f"Total Months: {MonthCount}", file=writefile)
     print(f"Total: ${FormattedTotalProfit}", file=writefile)
-    print(f"Average  Change: ${FormattedAverageChange}", file=writefile)
+    print(f"Average  Change: ${FormattedProfitDelta}", file=writefile)
     print(f"Greatest Increase in Profits: ${FormattedMaxProfit} in {MaxProfitMonth}", file=writefile)
     print(f"Greatest Decrease in Profits: ${FormattedMinProfit} in {MinProfitMonth}", file=writefile)
 
